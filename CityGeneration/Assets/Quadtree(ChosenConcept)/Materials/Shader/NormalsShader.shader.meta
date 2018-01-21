@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 04350fd79e0a10d479281cc597525ba7
+timeCreated: 1515846772
+licenseType: Free
+ShaderImporter:
+  defaultTextures:
+  - _FloorTex: {fileID: 2800000, guid: 1efd9ad32fddeaa4b87effd20c19370a, type: 3}
+  - _WallTex: {instanceID: 0}
+  - _CeilTex: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
