@@ -6,6 +6,7 @@ public class ObjectGenerator : MonoBehaviour
 {
     [SerializeField] GameObject building_root;
     [SerializeField] CuboidMesh cube_mesh;
+    [SerializeField] PlaneMesh plane_mesh;
 
     [SerializeField] Texture grass_texture;
 
@@ -93,11 +94,9 @@ public class ObjectGenerator : MonoBehaviour
     // as its just a flat surface and doesnt need to be 3D! 
     public GameObject GeneratePark(Vector3 _parent_pos, float _size_x, float _size_z)
     {
-        float width = _size_x;
-        float length = _size_z;
-        float height = 1.0f;
+        float height = 0.1f;
 
-        var component_1 = cube_mesh.GenerateCuboid(width, height, length);
+        var component_1 = cube_mesh.GenerateCuboid(_size_x, height, _size_z);
 
         // The Base building object
         var object_base = Instantiate(building_root, Vector3.zero, Quaternion.identity);
@@ -113,14 +112,39 @@ public class ObjectGenerator : MonoBehaviour
 
         component_1.transform.parent = object_base.transform;
 
-        component_1.GetComponent<Renderer>().material.SetTexture("_RoofTex", grass_texture);
+        //component_1.GetComponent<Renderer>().material.SetTexture("_RoofTex", grass_texture);
+
         object_base.GetComponent<Renderer>().material.SetTexture("_RoofTex", grass_texture);
+        object_base.GetComponent<Renderer>().material.SetTexture("_WallTex", grass_texture);
+        object_base.GetComponent<Renderer>().material.SetTexture("_SlopeTex", grass_texture);
 
         object_base.GetComponent<MeshCombine>().CombineMeshes();
 
         return object_base;
     }
 
+
+    public GameObject GenerateSideWalk(Vector3 _parent_pos, float _size_x, float _size_z)
+    {
+        var pavement = plane_mesh.GeneratePlane(_size_x, _size_z);
+
+        pavement.transform.position = new Vector3(_parent_pos.x, 0.0f, _parent_pos.z);
+
+        pavement.GetComponent<Renderer>().material.SetTexture("_MainTex", roof_textures[0]);
+
+        float factor = 1.0f;
+
+        var bounds = pavement.GetComponent<MeshFilter>().mesh.bounds;
+
+        var size = Vector3.Scale(bounds.size, transform.localScale) * factor;
+
+        if (size.y < .001f)
+            size.y = size.z;
+
+        pavement.GetComponent<Renderer>().material.SetTextureScale("_MainTex", size);
+
+        return pavement;
+    }
 
 
     private void SetTexture(List<GameObject> _components)

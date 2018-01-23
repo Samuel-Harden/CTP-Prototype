@@ -90,6 +90,7 @@
     <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\OLD\Test.cs" />
     <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\ObjectGenerator.cs" />
     <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\PerlinPopGen.cs" />
+    <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\PlaneMesh.cs" />
     <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\QuadtreeCityGen.cs" />
     <Compile Include="Assets\Terrain\Scripts\PaintTerrain.cs" />
     <Compile Include="Assets\Terrain\Scripts\TerrainGen.cs" />

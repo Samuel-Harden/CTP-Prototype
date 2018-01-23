@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class CuboidMesh : MonoBehaviour
 {
-    [SerializeField] GameObject cuboid_mesh_comp;
+    [SerializeField] GameObject mesh_comp;
 
     public GameObject GenerateCuboid(float _width, float _height, float _length)
     {
-        var cuboid = Instantiate(cuboid_mesh_comp, Vector3.zero, Quaternion.identity);
+        var cuboid = Instantiate(mesh_comp, Vector3.zero, Quaternion.identity);
 
         MeshFilter filter_one = cuboid.gameObject.GetComponent<MeshFilter>();
 

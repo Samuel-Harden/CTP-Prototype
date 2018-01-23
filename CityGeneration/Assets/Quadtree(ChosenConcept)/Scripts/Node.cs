@@ -19,10 +19,17 @@ public class Node : MonoBehaviour
 
     private int divide_count;
 
+    // Used for building placement
     Vector3 bottom_left_pos;
     Vector3 bottom_right_pos;
     Vector3 top_left_pos;
     Vector3 top_right_pos;
+
+    // Used for path placement
+    Vector3 path_bottom_left_pos;
+    Vector3 path_bottom_right_pos;
+    Vector3 path_top_left_pos;
+    Vector3 path_top_right_pos;
 
     Vector3 new_pos;
 
@@ -61,13 +68,19 @@ public class Node : MonoBehaviour
         float offset_x = _road_offset;
         float offset_z = _road_offset;
 
-        CreateOffSet(offset_z, offset_z);
+        CreateOffSet(offset_z, offset_z); // factors in the road size
+
+        // now mark area for pavement.....
+        path_bottom_left_pos  = bottom_left_pos;
+        path_bottom_right_pos = bottom_right_pos;
+        path_top_left_pos     = top_left_pos;
+        path_top_right_pos    = top_right_pos;
 
         // Calculate Pavement Offset
         offset_x = Vector3.Distance(bottom_left_pos, bottom_right_pos) / 10;
         offset_z = Vector3.Distance(bottom_left_pos, top_left_pos) / 10;
     
-        CreateOffSet(offset_x, offset_z);
+        CreateOffSet(offset_x, offset_z); // factors in space for pavement
 
         transform.parent = _parent_node.transform;
 
@@ -81,7 +94,6 @@ public class Node : MonoBehaviour
                 Divide(_positions, _depth, _node, _parent_node, _junction_positions, _road_offset, _nodes, _object_gen, _division);
             }
         }
-
 
         // if this node hasn't been divided, and it deeper than the x division
         if (!divided && _division > no_build_depth)
@@ -200,6 +212,8 @@ public class Node : MonoBehaviour
         var new_building = _object_gen.GenerateBuilding(new_pos, x, z);
 
         new_building.transform.parent = this.transform;
+
+        GenerateSideWalk(_object_gen);
     }
 
 
@@ -213,6 +227,21 @@ public class Node : MonoBehaviour
         var new_park = _object_gen.GeneratePark(new_pos, x, z);
 
         new_park.transform.parent = this.transform;
+
+        GenerateSideWalk(_object_gen);
+    }
+
+
+    private void GenerateSideWalk(ObjectGenerator _object_gen)
+    {
+        float x = Vector3.Distance(path_bottom_left_pos, path_bottom_right_pos);
+        float z = Vector3.Distance(path_bottom_left_pos, path_top_left_pos);
+
+        new_pos = new Vector3(path_bottom_left_pos.x + (x / 2), 0, path_bottom_left_pos.z + (z / 2));
+
+        var sidewalk = _object_gen.GenerateSideWalk(new_pos, x, z);
+
+        sidewalk.transform.parent = this.transform;
     }
 
 
