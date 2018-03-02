@@ -192,9 +192,9 @@ public class Voronoi : MonoBehaviour
     {
         Gizmos.color = Color.white;
 
-        foreach (Vector3 pos in positions)
+        /*foreach (Vector3 pos in positions)
         {
             Gizmos.DrawWireSphere(pos, 1);
-        }
+        }*/
     }
 }

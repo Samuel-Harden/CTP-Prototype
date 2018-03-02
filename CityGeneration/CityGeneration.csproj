@@ -80,18 +80,25 @@
   <ItemGroup>
     <Compile Include="Assets\Initial Concept\Scripts\CityConstruction.cs" />
     <Compile Include="Assets\L-System\Scripts\LSystem.cs" />
-    <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\CuboidMesh.cs" />
-    <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\Junction.cs" />
-    <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\MeshCombine.cs" />
-    <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\MeshCombineEditor.cs" />
-    <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\Node.cs" />
-    <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\OLD\CubeMeshData.cs" />
-    <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\OLD\ProceduralMesh.cs" />
-    <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\OLD\Test.cs" />
-    <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\ObjectGenerator.cs" />
-    <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\PerlinPopGen.cs" />
-    <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\PlaneMesh.cs" />
-    <Compile Include="Assets\Quadtree(ChosenConcept)\Scripts\QuadtreeCityGen.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\OLD\CubeMeshData.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\OLD\ProceduralMesh.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\OLD\ROTATE.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\OLD\Test.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\CuboidMesh.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\Junction.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\MeshCombine.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\MeshCombineEditor.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\Node.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\ObjectGenerator.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\PerlinPopGen.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\PlaneMesh.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\QuadtreeCityGen.cs" />
+    <Compile Include="Assets\Separation\Scripts\BuildingLot.cs" />
+    <Compile Include="Assets\Separation\Scripts\CityGen.cs" />
+    <Compile Include="Assets\Separation\Scripts\LotGen.cs" />
+    <Compile Include="Assets\Separation\Scripts\PathGen.cs" />
+    <Compile Include="Assets\Separation\Scripts\References.cs" />
+    <Compile Include="Assets\Separation\Scripts\Separation.cs" />
     <Compile Include="Assets\Terrain\Scripts\PaintTerrain.cs" />
     <Compile Include="Assets\Terrain\Scripts\TerrainGen.cs" />
     <Compile Include="Assets\Terrain\Standard Assets\Environment\Water\Water\Scripts\Displace.cs" />
@@ -107,7 +114,7 @@
     <Compile Include="Assets\Voronoi\Scripts\Voronoi.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Quadtree(ChosenConcept)\Materials\Shader\NormalsShader.shader" />
+    <None Include="Assets\Quadtree(Prototype Concept)\Materials\Shader\NormalsShader.shader" />
     <None Include="Assets\Terrain\Standard Assets\Environment\Water\Water\Shaders\FXWaterPro.shader" />
     <None Include="Assets\Terrain\Standard Assets\Environment\Water\Water4\Shaders\FXWater4Advanced.shader" />
     <None Include="Assets\Terrain\Standard Assets\Environment\Water\Water4\Shaders\FXWater4Simple.shader" />

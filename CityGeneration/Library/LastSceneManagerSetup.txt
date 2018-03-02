@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Quadtree(ChosenConcept)/Quadtree City.unity
+- path: Assets/Separation/Seperation.unity
   isLoaded: 1
   isActive: 1
