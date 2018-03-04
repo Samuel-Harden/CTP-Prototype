@@ -15,6 +15,10 @@ public class BuildingLot : MonoBehaviour
 
     private Separation separation;
 
+    private bool connectedMain;
+
+    private Vector3 lotBoundsPos;
+
 
     public void Initialise(int _lotWidth, int _lotLength, int _lotHeight,
         Vector3 _lotPos, int _roomType, int _roomID)
@@ -35,12 +39,46 @@ public class BuildingLot : MonoBehaviour
     }
 
 
+    public Vector3 LotBounds()
+    {
+        return new Vector3(transform.position.x - lotWidth / 2, 0.0f,
+            transform.position.z - lotLength / 2); ;
+    }
+
+
+    public int Width()
+    {
+        return lotWidth;
+    }
+
+
+    public int Length()
+    {
+        return lotLength;
+    }
+
+
+    public void ConnectToMain()
+    {
+        connectedMain = true;
+    }
+
+
+    public bool ConnectedToMain()
+    {
+        return connectedMain;
+    }
+
+
     private void OnDrawGizmos()
     {
-        if (separation.ConnectedToMain())
+        if (connectedMain)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireCube(transform.position, transform.localScale);
+
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(transform.position, new Vector3(transform.localScale.x / 2, transform.localScale.y, transform.localScale.z / 2));
             return;
         }
 

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-// This class will hold all the references in one place
+// This class will hold all the referencer in one place
 public class References : MonoBehaviour
 {
     CityGen cityGen;
     LotGen  lotGen;
     PathGen pathGen;
+    TileGen tileGen;
 
 
     private void Awake()
@@ -16,6 +17,7 @@ public class References : MonoBehaviour
         cityGen = GetComponent<CityGen>(); 
         lotGen  = GetComponent<LotGen>();
         pathGen = GetComponent<PathGen>();
+        tileGen = GetComponent<TileGen>();
     }
 
 
@@ -34,5 +36,11 @@ public class References : MonoBehaviour
     public PathGen PathGen()
     {
         return pathGen;
+    }
+
+
+    public TileGen TileGen()
+    {
+        return tileGen;
     }
 }

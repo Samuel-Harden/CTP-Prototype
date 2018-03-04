@@ -7,8 +7,10 @@ public class Node : MonoBehaviour
     [SerializeField] bool gizmos_enabled;
     private Vector3 position;
 
-    private float size_x;
-    private float size_z;
+    private float lotWidth;
+    private float lotLength;
+
+    private Vector3 nodeBoundsPos;
 
     private bool divided;
 
@@ -40,28 +42,30 @@ public class Node : MonoBehaviour
 
 
     public void Initialise(Vector3 _position, float _size_x, float _size_z,
-        List<Vector3> _positions, int _depth, GameObject _node, Transform _parent_node, List<Vector3> _junction_positions, float _road_offset, List<Node> _nodes, ObjectGenerator _object_gen, int _division)
+        List<Vector3> _positions, int _depth, GameObject _node, Transform _parent_node,
+        List<Vector3> _junction_positions, float _road_offset, List<Node> _nodes,
+        ObjectGenerator _object_gen, int _division)
     {
         //Debug.Log("Added Node");
 
         child_nodes = new List<GameObject>();
 
-        size_x = _size_x;
-        size_z = _size_z;
+        lotWidth = _size_x;
+        lotLength = _size_z;
 
         position = _position;
 
         // Add all possible juction positions to list
         _junction_positions.Add(position); // Bottom Left
-        _junction_positions.Add(new Vector3(position.x + size_x, 0, position.z)); // Bottom Right
-        _junction_positions.Add(new Vector3(position.x, 0, position.z + size_z)); // Top Left
-        _junction_positions.Add(new Vector3(position.x + size_x, 0, position.z + size_z)); // Top Right
+        _junction_positions.Add(new Vector3(position.x + lotWidth, 0, position.z)); // Bottom Right
+        _junction_positions.Add(new Vector3(position.x, 0, position.z + lotLength)); // Top Left
+        _junction_positions.Add(new Vector3(position.x + lotWidth, 0, position.z + lotLength)); // Top Right
 
         // Line up positions to size of node
         bottom_left_pos  = position;
-        bottom_right_pos = new Vector3(position.x + size_x, 0, position.z);
-        top_left_pos     = new Vector3(position.x, 0, position.z + size_z);
-        top_right_pos    = new Vector3(position.x + size_x, 0, position.z + size_z);
+        bottom_right_pos = new Vector3(position.x + lotWidth, 0, position.z);
+        top_left_pos     = new Vector3(position.x, 0, position.z + lotLength);
+        top_right_pos    = new Vector3(position.x + lotWidth, 0, position.z + lotLength);
     
 
         // Calculate Road Offset
@@ -77,10 +81,10 @@ public class Node : MonoBehaviour
         path_top_right_pos    = top_right_pos;
 
         // Calculate Pavement Offset
-        offset_x = Vector3.Distance(bottom_left_pos, bottom_right_pos) / 10;
-        offset_z = Vector3.Distance(bottom_left_pos, top_left_pos) / 10;
+        //offset_x = Vector3.Distance(bottom_left_pos, bottom_right_pos) / 10;
+        //offset_z = Vector3.Distance(bottom_left_pos, top_left_pos) / 10;
     
-        CreateOffSet(offset_x, offset_z); // factors in space for pavement
+        //CreateOffSet(offset_x, offset_z); // factors in space for pavement
 
         transform.parent = _parent_node.transform;
 
@@ -96,11 +100,11 @@ public class Node : MonoBehaviour
         }
 
         // if this node hasn't been divided, and it deeper than the x division
-        if (!divided && _division > no_build_depth)
-            GenerateBuilding(_object_gen, _road_offset);
+        //if (!divided && _division > no_build_depth)
+            //GenerateBuilding(_object_gen, _road_offset);
 
-        else if (!divided && _division <= no_build_depth)
-            GeneratePark(_object_gen, _road_offset);
+        //else if (!divided && _division <= no_build_depth)
+            //GeneratePark(_object_gen, _road_offset);
     }
 
 
@@ -123,8 +127,8 @@ public class Node : MonoBehaviour
         foreach(Vector3 pos in _positions)
         {
             // is this position within bounds of node
-            if(pos.x >= position.x && pos.x < (position.x + size_x) &&
-                pos.z >= position.z && pos.z < (position.z + size_z))
+            if(pos.x >= position.x && pos.x < (position.x + lotWidth) &&
+                pos.z >= position.z && pos.z < (position.z + lotLength))
             {
                 count++;
             }
@@ -147,8 +151,8 @@ public class Node : MonoBehaviour
 
         Vector3 new_position = position;
 
-        float new_size_x = size_x / 2;
-        float new_size_z = size_z / 2;
+        float new_size_x = lotWidth / 2;
+        float new_size_z = lotLength / 2;
 
         int count = 0;
 
@@ -165,41 +169,18 @@ public class Node : MonoBehaviour
 
             node_obj.GetComponent<Node>().Initialise(new_position, new_size_x, new_size_z, _positions, _depth, _node, _parent_node.transform, _junction_positions, _road_offset, _nodes, _object_gen, _division);
 
-            new_position.x += size_x / 2;
+            new_position.x += lotWidth / 2;
 
             count++;
 
             if (count > 1)
             {
                 new_position.x = position.x;
-                new_position.z += size_z / 2;
+                new_position.z += lotLength / 2;
                 count = 0;
             }
         }
     }
-
-
-    /*
-    public void AddFuzz()
-    {
-        // Take each corner and add 10% fuzz
-
-        float fuzz_x = size_x / 10;
-        float fuzz_z = size_z / 10;
-
-        bottom_left_pos.x += Random.Range((bottom_left_pos.x - fuzz_x), (bottom_left_pos.x + fuzz_x));
-
-
-
-
-        if (child_nodes.Count == 0)
-            return;
-
-        foreach(GameObject child in child_nodes)
-        {
-            child.GetComponent<Node>().AddFuzz();
-        }
-    }*/
 
 
     private void GenerateBuilding(ObjectGenerator _object_gen, float _road_offset)
@@ -251,24 +232,49 @@ public class Node : MonoBehaviour
     }
 
 
+    public bool Divided()
+    {
+        return divided;
+    }
+
+
+    public Vector3 LotBounds()
+    {
+        return new Vector3(transform.position.x - lotWidth / 2, 0.0f,
+            transform.position.z - lotLength / 2); ;
+    }
+
+
+    public float Width()
+    {
+        return lotWidth;
+    }
+
+
+    public float Length()
+    {
+        return lotLength;
+    }
+
+
     private void OnDrawGizmos()
     {
         if (gizmos_enabled)
         {
-            /*Gizmos.color = Color.green;
+            Gizmos.color = Color.green;
 
             Gizmos.DrawWireSphere(new_pos, 1);
             // Bottom Left to Bottom Right
-            Gizmos.DrawLine(position, new Vector3(position.x + size_x, 0, position.z));
+            Gizmos.DrawLine(position, new Vector3(position.x + lotWidth, 0, position.z));
 
             // Bottom Right to Top Right
-            Gizmos.DrawLine(new Vector3(position.x + size_x, 0, position.z), new Vector3(position.x + size_x, 0, position.z + size_z));
+            Gizmos.DrawLine(new Vector3(position.x + lotWidth, 0, position.z), new Vector3(position.x + lotWidth, 0, position.z + lotLength));
 
             // Top Right to Top Left
-            Gizmos.DrawLine(new Vector3(position.x + size_x, 0, position.z + size_z), new Vector3(position.x , 0, position.z + size_z));
+            Gizmos.DrawLine(new Vector3(position.x + lotWidth, 0, position.z + lotLength), new Vector3(position.x , 0, position.z + lotLength));
 
             // Top Left to Bottom Left
-            Gizmos.DrawLine(new Vector3(position.x, 0, position.z + size_z), position);*/
+            Gizmos.DrawLine(new Vector3(position.x, 0, position.z + lotLength), position);
 
             // if this node has not been divided we have a building area...
             if (!divided)

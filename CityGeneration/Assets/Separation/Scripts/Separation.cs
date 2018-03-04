@@ -9,8 +9,7 @@ public class Separation : MonoBehaviour
     Vector3 velocity;
     Vector3 acceleration;
 
-    private float maxSpeed = 0.5f;
-    private float maxForce = 0.5f;
+    private float maxSpeed = 0.25f;
 
     private bool overlapping;
 
@@ -31,7 +30,7 @@ public class Separation : MonoBehaviour
     }
 
 
-    public void CheckSpacing(List<BuildingLot> _lots)
+    public void CheckSpacing(List<BuildingLot> _lots, int _cityRadius)
     {
         lotBoundsPoint = new Vector3(transform.position.x - lotWidth / 2, 0.0f,
             transform.position.z - lotLength / 2);
@@ -62,8 +61,6 @@ public class Separation : MonoBehaviour
             return;
         }
 
-        //if(BorderCheck)
-
         overlapping = false;
     }
 
@@ -72,24 +69,26 @@ public class Separation : MonoBehaviour
     {
         List<BuildingLot> overlappingRooms = new List<BuildingLot>();
 
+        float forceIncrease = 0.5f;
+
         for (int i = 0; i < _lots.Count; i++)
         {
             if (_lots[i].gameObject == this.gameObject)
                 continue;
 
             // ((A.X + A.Width) > (B.X) &&
-            if ((lotBoundsPoint.x + lotWidth)
-                > (_lots[i].Separation().LotBounds().x) &&
+            if (((lotBoundsPoint.x - forceIncrease) + (float)lotWidth + forceIncrease)
+                > (_lots[i].LotBounds().x) &&
                 // (A.X) < (B.X + B.Width) &&
-                (lotBoundsPoint.x) < (_lots[i].Separation().LotBounds().x
-                    + _lots[i].Separation().Width()) &&
+                (lotBoundsPoint.x) < (_lots[i].LotBounds().x
+                    + _lots[i].Width()) &&
 
                 // (A.Y + A.Height) > (B.Y) &&
-                (lotBoundsPoint.z + lotLength)
-                > (_lots[i].Separation().LotBounds().z) &&
+                ((lotBoundsPoint.z - forceIncrease) + (float)lotLength + forceIncrease)
+                > (_lots[i].LotBounds().z) &&
                 // (A.Y) < (B.Y + B.Height))
-                (lotBoundsPoint.z) < (_lots[i].Separation().LotBounds().z
-                    + _lots[i].Separation().Length()))
+                (lotBoundsPoint.z) < (_lots[i].LotBounds().z
+                    + _lots[i].Length()))
             {
                 overlappingRooms.Add(_lots[i]);
             }
@@ -141,10 +140,10 @@ public class Separation : MonoBehaviour
     public void SetPos()
     {
         transform.position = new Vector3(Mathf.RoundToInt(transform.position.x),
-        0.0f, Mathf.RoundToInt(transform.position.z));
+            0.0f, Mathf.RoundToInt(transform.position.z));
 
         lotBoundsPoint = new Vector3(Mathf.RoundToInt(transform.position.x - lotWidth / 2),
-        0.0f, Mathf.RoundToInt(transform.position.z - lotLength / 2));
+            0.0f, Mathf.RoundToInt(transform.position.z - lotLength / 2));
     }
 
 
@@ -152,27 +151,53 @@ public class Separation : MonoBehaviour
     {
         foreach (BuildingLot lot in _lots)
         {
-            if(!lot.Separation().ConnectedToMain())
+            if(!lot.ConnectedToMain())
             {
                 // ((A.X + A.Width) >= (B.X) &&
                 if ((lotBoundsPoint.x + lotWidth)
-                        >= (lot.Separation().LotBounds().x) &&
+                        >= (lot.LotBounds().x) &&
                     // (A.X) <= (B.X + B.Width) &&
-                    (lotBoundsPoint.x) <= (lot.Separation().LotBounds().x
-                        + lot.Separation().Width()) &&
+                    (lotBoundsPoint.x) <= (lot.LotBounds().x
+                        + lot.Width()) &&
 
                     // (A.Y + A.Height) >= (B.Y) &&
                     (lotBoundsPoint.z + lotLength)
-                        >= (lot.Separation().LotBounds().z) &&
+                        >= (lot.LotBounds().z) &&
                     // (A.Y) <= (B.Y + B.Height))
-                    (lotBoundsPoint.z) <= (lot.Separation().LotBounds().z
-                        + lot.Separation().Length()))
+                    (lotBoundsPoint.z) <= (lot.LotBounds().z
+                        + lot.Length()))
                 {
-                    lot.Separation().ConnectToMain();
+                    lot.ConnectToMain();
                     lot.Separation().BorderCheck(_lots);
                 }
             }
         }
+    }
+
+
+    public void MoveTowardsCentre(Vector3 _cityCentre)
+    {
+        float offsetX = 0;
+        float offsetZ = 0;
+
+        lotBoundsPoint = new Vector3(transform.position.x - lotWidth / 2, 0.0f,
+            transform.position.z - lotLength / 2);
+
+        if (lotBoundsPoint.x > _cityCentre.x)
+            offsetX = -1;
+
+        else if (lotBoundsPoint.x < _cityCentre.x)
+            offsetX = 1;
+
+        //if (transform.position.z > _cityCentre.z)
+            //offsetZ = -1;
+
+        //else if (transform.position.z < _cityCentre.z)
+            //offsetZ = 1;
+
+        Debug.Log("moving towards Centre");
+
+        transform.position = new Vector3(transform.position.x + offsetX, transform.position.y, transform.position.z + offsetZ);
     }
 
 
@@ -215,38 +240,32 @@ public class Separation : MonoBehaviour
     }
 
 
-    public Vector3 LotBounds()
-    {
-        return lotBoundsPoint;
-    }
-
-
-    public int Width()
-    {
-        return lotWidth;
-    }
-
-
-    public int Length()
-    {
-        return lotLength;
-    }
-
-
     public bool IsOverlapping()
     {
         return overlapping;
     }
 
 
-    public void ConnectToMain()
+    public Vector3 GetTopLeftPos()
     {
-        connectedMain = true;
+        return new Vector3(transform.position.x - lotWidth / 2, 0.0f, transform.position.z + lotLength / 2);
     }
 
 
-    public bool ConnectedToMain()
+    public Vector3 GetTopRightPos()
     {
-        return connectedMain;
+        return new Vector3(transform.position.x + lotWidth / 2, 0.0f, transform.position.z + lotLength / 2);
+    }
+
+
+    public Vector3 GetBottomLeftPos()
+    {
+        return new Vector3(transform.position.x - lotWidth / 2, 0.0f, transform.position.z - lotLength / 2);
+    }
+
+
+    public Vector3 GetBottomRightPos()
+    {
+        return new Vector3(transform.position.x + lotWidth / 2, 0.0f, transform.position.z - lotLength / 2);
     }
 }

@@ -93,12 +93,16 @@
     <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\PerlinPopGen.cs" />
     <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\PlaneMesh.cs" />
     <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\QuadtreeCityGen.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\TileGenQT.cs" />
+    <Compile Include="Assets\Quadtree(Prototype Concept)\Scripts\Quadtree System\TileQT.cs" />
     <Compile Include="Assets\Separation\Scripts\BuildingLot.cs" />
     <Compile Include="Assets\Separation\Scripts\CityGen.cs" />
     <Compile Include="Assets\Separation\Scripts\LotGen.cs" />
     <Compile Include="Assets\Separation\Scripts\PathGen.cs" />
     <Compile Include="Assets\Separation\Scripts\References.cs" />
     <Compile Include="Assets\Separation\Scripts\Separation.cs" />
+    <Compile Include="Assets\Separation\Scripts\Tile.cs" />
+    <Compile Include="Assets\Separation\Scripts\TileGen.cs" />
     <Compile Include="Assets\Terrain\Scripts\PaintTerrain.cs" />
     <Compile Include="Assets\Terrain\Scripts\TerrainGen.cs" />
     <Compile Include="Assets\Terrain\Standard Assets\Environment\Water\Water\Scripts\Displace.cs" />

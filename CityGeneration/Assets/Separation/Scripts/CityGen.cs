@@ -4,26 +4,31 @@ using System.Linq;
 
 public class CityGen : MonoBehaviour
 {
-    References references;
+    References referencer;
 
     [SerializeField] private List<BuildingLot> lots;
 
     private bool generateCity;
+    [SerializeField] bool drawPositions;
 
-    private int cityRadius = 50;
-    private int noLots =  100;
+    [SerializeField] int cityRadius = 300;
+    [SerializeField] int noLots =  200;
 
     private Vector3 cityCentre;
 
     private bool setupComplete;
 
+    private List<Vector3> intersectionPositions;
+
+
     private void Start()
     {
         lots = new List<BuildingLot>();
+        intersectionPositions = new List<Vector3>();
 
-        references = GetComponent<References>();
+        referencer = GetComponent<References>();
 
-        references.LotGen().GenerateLots(lots, noLots, cityRadius, false);
+        referencer.LotGen().GenerateLots(lots, noLots, cityRadius, false);
 
         generateCity = true;
         setupComplete = false;
@@ -40,7 +45,7 @@ public class CityGen : MonoBehaviour
 
                 foreach (BuildingLot lot in lots)
                 {
-                    lot.Separation().CheckSpacing(lots);
+                    lot.Separation().CheckSpacing(lots, cityRadius);
                 }
 
                 foreach (BuildingLot lot in lots)
@@ -74,22 +79,18 @@ public class CityGen : MonoBehaviour
                     // if there is no overlap and all lots are lined up 
                     if (!overlap)
                     {
-                        if (!setupComplete)
-                        {
-                            // start setting up city properly!
-                            cityCentre = SetCityCentre();
+                        // start setting up city properly!
+                        cityCentre = SetCityCentre();
 
-                            // some lots are not connected to main,
-                            // sort list of lots by distance to city centre,
-                            // then loop through all to see if they can be moved closer on the x and or z axis (1 at a time)
-                            // until they cannot be any closer
+                        lots = lots.OrderBy(x => Vector3.Distance(cityCentre, x.transform.position)).ToList();
 
-                            lots = lots.OrderBy(x => Vector3.Distance(cityCentre, x.transform.position)).ToList();
+                        referencer.PathGen().ConnectLots(lots, cityCentre, cityRadius);
 
-                            references.PathGen().ConnectLots(lots, cityCentre);
+                        referencer.TileGen().Initialise(lots, cityCentre);
 
-                            setupComplete = true;
-                        }
+                        GenerateIntersections();
+
+                        setupComplete = true;
                     }
                 }
             }
@@ -107,22 +108,36 @@ public class CityGen : MonoBehaviour
 
         foreach (BuildingLot lot in lots)
         {
-            if (lot.Separation().LotBounds().x < minPosX)
-                minPosX = lot.Separation().LotBounds().x;
+            if (lot.LotBounds().x < minPosX)
+                minPosX = lot.LotBounds().x;
 
-            if (lot.Separation().LotBounds().x + lot.Separation().Width() > maxPosX)
-                maxPosX = lot.Separation().LotBounds().x + lot.Separation().Width();
+            if (lot.LotBounds().x + lot.Width() > maxPosX)
+                maxPosX = lot.LotBounds().x + lot.Width();
 
-            if (lot.Separation().LotBounds().z < minPosZ)
-                minPosZ = lot.Separation().LotBounds().z;
+            if (lot.LotBounds().z < minPosZ)
+                minPosZ = lot.LotBounds().z;
 
-            if (lot.Separation().LotBounds().z + lot.Separation().Length() > maxPosZ)
-                maxPosZ = lot.Separation().LotBounds().z + lot.Separation().Length();
+            if (lot.LotBounds().z + lot.Length() > maxPosZ)
+                maxPosZ = lot.LotBounds().z + lot.Length();
         }
 
         Vector3 centre = new Vector3(Mathf.Abs(minPosX + maxPosX) / 2, 0.0f, Mathf.Abs(minPosZ + maxPosZ) / 2);
 
         return centre;
+    }
+
+
+    private void GenerateIntersections()
+    {
+        foreach (BuildingLot lot in lots)
+        {
+            intersectionPositions.Add(lot.Separation().GetTopLeftPos());
+            intersectionPositions.Add(lot.Separation().GetTopRightPos());
+            intersectionPositions.Add(lot.Separation().GetBottomLeftPos());
+            intersectionPositions.Add(lot.Separation().GetBottomRightPos());
+        }
+
+        intersectionPositions = intersectionPositions.Distinct().ToList();
     }
 
 
@@ -132,6 +147,15 @@ public class CityGen : MonoBehaviour
         {
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(cityCentre, 1.0f);
+        }
+
+        if(drawPositions)
+        {
+            foreach (Vector3 pos in intersectionPositions)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(pos, 1.0f);
+            }
         }
     }
 }

@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class QuadtreeCityGen : MonoBehaviour
 {
-    [SerializeField] int grid_height;
-    [SerializeField] int grid_width;
+    [SerializeField] int cityZ;
+    [SerializeField] int cityX;
     [SerializeField] int max_depth;
 
     [SerializeField] int divide_count = 2;
@@ -22,6 +22,7 @@ public class QuadtreeCityGen : MonoBehaviour
     [SerializeField] GameObject junction_parent;
 
     private PerlinPopGen pop_gen;
+    private TileGenQT tileGen;
 
     private float road_offset;
 
@@ -49,7 +50,8 @@ public class QuadtreeCityGen : MonoBehaviour
         // Set the road offset to half a junctions scale
         road_offset = junction.transform.localScale.x / 2;
 
-        pop_gen = this.gameObject.GetComponent<PerlinPopGen>();
+        pop_gen = GetComponent<PerlinPopGen>();
+        tileGen = GetComponent<TileGenQT>();
 
         pop_gen.SetPerlinNoise(perlin_noise);
 
@@ -61,14 +63,7 @@ public class QuadtreeCityGen : MonoBehaviour
 
     void GeneratePositions()
     {
-        /*for (int i = 0; i < no_positions; i++)
-        {
-            Vector3 pos = new Vector3(Random.Range(0, grid_width), 0, Random.Range(0, grid_height));
-
-            new_positions.Add(pos);
-        }*/
-
-        pop_gen.GeneratePopData(grid_width, grid_height, positions);
+        pop_gen.GeneratePopData(cityX, cityZ, positions);
 
         for (int i = 0; i < positions.Count; i++)
         {
@@ -113,8 +108,8 @@ public class QuadtreeCityGen : MonoBehaviour
     void GenerateInitialNode()
     {
         Vector3 pos  = Vector3.zero;
-        float size_x = grid_width;
-        float size_z = grid_height;
+        float size_x = cityX;
+        float size_z = cityZ;
 
         var node_obj = Instantiate(node, pos, node.transform.rotation);
 
@@ -125,24 +120,27 @@ public class QuadtreeCityGen : MonoBehaviour
         node_obj.GetComponent<Node>().SetDivideCount(divide_count);
 
         node_obj.GetComponent<Node>().Initialise(Vector3.zero,
-            size_x, size_z, new_positions, max_depth, node, node_parent.transform, junction_positions, road_offset, nodes, build_gen, 0);
+            size_x, size_z, new_positions, max_depth, node, node_parent.transform,
+            junction_positions, road_offset, nodes, build_gen, 0);
 
         clean_junction_positions = junction_positions.Distinct().ToList();
 
-        for(int i = 0; i < clean_junction_positions.Count; i++)
+        /*for(int i = 0; i < clean_junction_positions.Count; i++)
         {
             var crossing = Instantiate(junction, clean_junction_positions[i], Quaternion.identity);
 
             junctions.Add(crossing.GetComponent<Junction>());
 
-            crossing.GetComponent<Junction>().Initalise(grid_width, grid_height);
+            crossing.GetComponent<Junction>().Initalise(cityX, cityZ);
 
             crossing.transform.parent = junction_parent.transform;
-        }
+        }*/
 
-        SetRoads();
+        ClearNodes();
 
-        //Debug.Log(clean_junction_positions.Count);
+        tileGen.Initialise(nodes, cityX, cityZ);
+
+        //SetRoads();
     }
 
 
@@ -155,17 +153,34 @@ public class QuadtreeCityGen : MonoBehaviour
     }
 
 
+    void ClearNodes()
+    {
+        Debug.Log(nodes.Count);
+
+        for (int i = nodes.Count - 1; i >= 0; i--)
+        {
+            if(nodes[i].Divided())
+            {
+                nodes.RemoveAt(i);
+                Debug.Log("Cleared Node");
+            }
+        }
+
+        Debug.Log(nodes.Count);
+    }
+
+
     void SanityCheckInitialSettings()
     {
         // Check X + Z are at least half to avoid weird stuff!
-        if(grid_height < grid_width / 2)
+        if(cityZ < cityX / 2)
         {
-            grid_height = grid_width / 2;
+            cityZ = cityX / 2;
         }
 
-        else if (grid_width < grid_height / 2)
+        else if (cityX < cityZ / 2)
         {
-            grid_width = grid_height / 2;
+            cityX = cityZ / 2;
         }
 
         // May need more Sanity checks here later...
